@@ -1,6 +1,5 @@
-load("@rules_protobuf//:protobuf.bzl", "py_proto_library")
-
-py_proto_library(
-    name="envoy_api_py",
-    srcs = ["@envoy_api//envoy"]
+py_binary(
+    name = "futon_dynamics",
+    srcs = ["futon_dynamics.py"],
+    deps = ["@envoy_api//envoy/api/v2:pkg_py_proto"],
 )
