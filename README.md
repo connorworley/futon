@@ -4,7 +4,7 @@ Envoy xDS service for k8s endpoints
 
 ## Running ad-hoc
 ```
-bazel build //futon_dynamics
+bazel run //futon_dynamics
 ```
 
 ## Building a .par file
