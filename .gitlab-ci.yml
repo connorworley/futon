@@ -4,6 +4,12 @@ image:
 
 before_script:
   - apt-get update && apt-get install -y cmake ninja
+  - echo "build --disk_cache=$CI_PROJECT_DIR/.cache" >> .bazelrc
+
+cache:
+  key: bazel_cache
+  paths:
+    - .cache
 
 build:
   script:
