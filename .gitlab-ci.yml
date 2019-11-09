@@ -1,19 +1,14 @@
-default:
-    image:
-        name: l.gcr.io/google/bazel:latest
-        entrypoint: [""]
-    before_script:
-        - echo "build --disk_cache=$CI_PROJECT_DIR/.cache" >> .bazelrc
+image:
+  name: l.gcr.io/google/bazel:latest
+  entrypoint: ['']
 
-cache:
-    key: bazel_cache
-    paths:
-        - .cache/
+before_script:
+  - apt-get update && apt-get install -y cmake ninja
 
 build:
-    script:
-        - bazel build //futon_dynamics:futon_dynamics.par
-    artifacts:
-        paths:
-            - bazel-bin/futon_dynamics/futon_dynamics.par
-        expire_in: 1 month
+  script:
+    - bazel build //futon_dynamics:futon_dynamics.par
+  artifacts:
+    paths:
+      - bazel-bin/futon_dynamics/futon_dynamics.par
+    expire_in: 1 month
