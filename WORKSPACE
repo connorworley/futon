@@ -50,3 +50,12 @@ pip_import(
 
 load("@requirements_txt//:requirements.bzl", "pip_install")
 pip_install()
+
+# subpar
+http_archive(
+    name = "subpar",
+    urls = [
+        "https://github.com/google/subpar/archive/35bb9f0092f71ea56b742a520602da9b3638a24f.tar.gz",
+    ],
+    strip_prefix = "subpar-35bb9f0092f71ea56b742a520602da9b3638a24f",
+)
