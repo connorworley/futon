@@ -1,4 +1,6 @@
+import itertools
 import json
+import logging
 import sys
 from functools import lru_cache
 
@@ -19,7 +21,7 @@ class ClusterEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Cluster):
             return MessageToDict(obj)
-        return json.JSONEncoder.default(sef, obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 @lru_cache(maxsize=1)
@@ -31,7 +33,7 @@ def k8s_client():
 def create_app():
     app = Flask(__name__)
 
-    @app.route('/')
+    @app.route("/")
     def get_clusters():
         clusters = []
 
@@ -40,7 +42,7 @@ def create_app():
         nodes = k8s_client().list_node(watch=False)
 
         for service in services.items:
-            if service.spec.type != 'NodePort':
+            if service.spec.type != "NodePort":
                 continue
 
             node_ports = [port.node_port for port in service.spec.ports]
@@ -50,7 +52,12 @@ def create_app():
                 node_addresses = []
                 if endpoint.metadata.labels is None:
                     continue
-                if not all([endpoint.metadata.labels.get(key) == value for key, value in service.spec.selector.items()]):
+                if not all(
+                    [
+                        endpoint.metadata.labels.get(key) == value
+                        for key, value in service.spec.selector.items()
+                    ]
+                ):
                     continue
                 for subset in endpoint.subsets:
                     for address in subset.addresses:
@@ -58,7 +65,7 @@ def create_app():
                             if node.metadata.name != address.node_name:
                                 continue
                             for node_address in node.status.addresses:
-                                if node_address.type != 'InternalIP':
+                                if node_address.type != "InternalIP":
                                     continue
                                 node_addresses.append(node_address.address)
                 for address, port in itertools.product(node_addresses, node_ports):
@@ -67,8 +74,7 @@ def create_app():
                             endpoint=Endpoint(
                                 address=Address(
                                     socket_address=SocketAddress(
-                                        address=address,
-                                        port_value=port,
+                                        address=address, port_value=port,
                                     ),
                                 ),
                             ),
@@ -77,13 +83,11 @@ def create_app():
 
             clusters.append(
                 Cluster(
-                    name = service.metadata.name,
-                    type = Cluster.STATIC,
-                    load_assignment = ClusterLoadAssignment(
+                    name=service.metadata.name,
+                    type=Cluster.STATIC,
+                    load_assignment=ClusterLoadAssignment(
                         cluster_name=service.metadata.name,
-                        endpoints=[LocalityLbEndpoints(
-                            lb_endpoints=lb_endpoints,
-                        )],
+                        endpoints=[LocalityLbEndpoints(lb_endpoints=lb_endpoints,)],
                     ),
                 ),
             )
@@ -94,8 +98,10 @@ def create_app():
 
 
 def main(_argv):
-    serve(create_app(), listen='*:8888')
+    logger = logging.getLogger("waitress")
+    logger.setLevel(logging.INFO)
+    serve(create_app(), listen="*:8888")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv)
