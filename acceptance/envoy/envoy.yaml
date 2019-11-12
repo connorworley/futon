@@ -16,7 +16,7 @@ static_resources:
   clusters:
   - name: futon-dynamics
     connect_timeout: 1s
-    type: logical_dns
+    type: strict_dns
     load_assignment:
       cluster_name: futon-dynamcis
       endpoints:
@@ -25,7 +25,7 @@ static_resources:
               address:
                 socket_address:
                   address: host.docker.internal
-                  port_value: 8888
+                  port_value: 30001
 dynamic_resources:
   cds_config:
     api_config_source:

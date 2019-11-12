@@ -3,7 +3,7 @@ import sys
 
 import flask
 import kubernetes
-from cheroot.wsgi import Server
+import waitress
 
 import futon_dynamics.clusters
 
@@ -13,24 +13,18 @@ def main(argv):
         description='k8s / Envoy Cluster Discovery Service',
     )
     parser.add_argument(
-        '--kubeconfig-path',
-        default=None,
-        help='kubeconfig path',
-    )
-    parser.add_argument(
         '--port',
         type=int,
         default=8888,
     )
     args = parser.parse_args(argv)
 
-    kubernetes.config.load_kube_config(config_file=args.kubeconfig_path)
+    kubernetes.config.load_incluster_config()
     k8s_client = kubernetes.client.CoreV1Api()
 
     app = flask.Flask(__name__)
     app.register_blueprint(futon_dynamics.clusters.blueprint(k8s_client))
-    print('Starting futon-dynamics server...')
-    Server(("0.0.0.0", args.port), app).safe_start()
+    waitress.serve(app, host='0.0.0.0', port=args.port)
 
 
 if __name__ == "__main__":
