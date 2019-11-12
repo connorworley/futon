@@ -3,7 +3,11 @@ load("@subpar//:subpar.bzl", "par_binary")
 
 par_binary(
     name = "futon_dynamics",
-    srcs = ["futon_dynamics.py"],
+    srcs = [
+        "clusters.py",
+        "main.py",
+    ],
     deps = ["@envoy_api//envoy/api/v2:pkg_py_proto"] + all_requirements,
+    main = "main.py",
     zip_safe = False,
 )
