@@ -1,2 +1,0 @@
-FROM envoyproxy/envoy:v1.12.0
-ADD ./envoy.yaml /etc/envoy/envoy.yaml
