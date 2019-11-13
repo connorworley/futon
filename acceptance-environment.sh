@@ -2,7 +2,6 @@
 set -euxo pipefail
 
 function cleanup {
-    ! kubectl get pods -o wide
     unset KUBECONFIG
     kind delete cluster
 }
