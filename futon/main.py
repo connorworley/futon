@@ -10,12 +10,10 @@ import futon.clusters
 
 def main(argv):
     parser = argparse.ArgumentParser(
-        description='k8s / Envoy Cluster Discovery Service',
+        description="k8s / Envoy Cluster Discovery Service",
     )
     parser.add_argument(
-        '--port',
-        type=int,
-        default=3939,
+        "--port", type=int, default=3939,
     )
     args = parser.parse_args(argv)
 
@@ -24,7 +22,7 @@ def main(argv):
 
     app = flask.Flask(__name__)
     app.register_blueprint(futon.clusters.blueprint(k8s_client))
-    waitress.serve(app, host='0.0.0.0', port=args.port)
+    waitress.serve(app, host="0.0.0.0", port=args.port)
 
 
 if __name__ == "__main__":

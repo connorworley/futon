@@ -19,24 +19,18 @@ from google.protobuf.duration_pb2 import Duration
 
 
 def k8s_service_to_envoy_cluster(service, pods):
-    ports = map(
-        lambda port: port.node_port,
-        service.spec.ports,
-    )
+    ports = map(lambda port: port.node_port, service.spec.ports,)
 
     pods = filter(
-        lambda pod: pod.metadata.labels is not None \
-        and all( \
-            pod.metadata.labels.get(key) == value \
-            for key, value in service.spec.selector.items() \
+        lambda pod: pod.metadata.labels is not None
+        and all(
+            pod.metadata.labels.get(key) == value
+            for key, value in service.spec.selector.items()
         ),
         pods,
     )
 
-    addresses = map(
-        lambda pod: pod.status.host_ip,
-        pods,
-    )
+    addresses = map(lambda pod: pod.status.host_ip, pods,)
 
     return Cluster(
         connect_timeout=Duration(seconds=5),
@@ -44,16 +38,18 @@ def k8s_service_to_envoy_cluster(service, pods):
             cluster_name=service.metadata.name,
             endpoints=[
                 LocalityLbEndpoints(
-                    lb_endpoints=[LbEndpoint(
-                        endpoint=Endpoint(
-                            address=Address(
-                                socket_address=SocketAddress(
-                                    address=address,
-                                    port_value=port,
+                    locality=Locality(),  # TODO: get actual locality from node labels
+                    lb_endpoints=[
+                        LbEndpoint(
+                            endpoint=Endpoint(
+                                address=Address(
+                                    socket_address=SocketAddress(
+                                        address=address, port_value=port,
+                                    ),
                                 ),
                             ),
-                        ),
-                    )],
+                        )
+                    ],
                 )
                 for address, port in itertools.product(addresses, ports)
             ],
@@ -70,16 +66,14 @@ def clusters(k8s_client):
     pods = k8s_client.list_pod_for_all_namespaces().items
 
     services = filter(
-        lambda service: ( \
-            len(discovery_request.resource_names) == 0 \
-            or service.metadata.name in discovery_request.resource_names \
-        ) and service.spec.type == "NodePort",
+        lambda service: (
+            len(discovery_request.resource_names) == 0
+            or service.metadata.name in discovery_request.resource_names
+        )
+        and service.spec.type == "NodePort",
         services,
     )
-    clusters = map(
-        partial(k8s_service_to_envoy_cluster, pods=pods),
-        services,
-    )
+    clusters = map(partial(k8s_service_to_envoy_cluster, pods=pods), services,)
 
     response = DiscoveryResponse()
     # pack clusters into a `repeatable Any` field
@@ -94,8 +88,6 @@ def clusters(k8s_client):
 def blueprint(k8s_client):
     blueprint = flask.Blueprint(__name__, __name__)
     blueprint.route("/v2/discovery:clusters", methods=["POST"])(
-        wraps(clusters)(
-            partial(clusters, k8s_client=k8s_client),
-        ),
+        wraps(clusters)(partial(clusters, k8s_client=k8s_client),),
     )
     return blueprint
