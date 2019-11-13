@@ -5,7 +5,7 @@ import flask
 import kubernetes
 import waitress
 
-import futon_dynamics.clusters
+import futon.clusters
 
 
 def main(argv):
@@ -15,7 +15,7 @@ def main(argv):
     parser.add_argument(
         '--port',
         type=int,
-        default=8888,
+        default=3939,
     )
     args = parser.parse_args(argv)
 
@@ -23,7 +23,7 @@ def main(argv):
     k8s_client = kubernetes.client.CoreV1Api()
 
     app = flask.Flask(__name__)
-    app.register_blueprint(futon_dynamics.clusters.blueprint(k8s_client))
+    app.register_blueprint(futon.clusters.blueprint(k8s_client))
     waitress.serve(app, host='0.0.0.0', port=args.port)
 
 

@@ -6,7 +6,7 @@ static_resources:
   - address:
       socket_address:
         address: 0.0.0.0
-        port_value: 12345
+        port_value: 8080
     filter_chains:
     - filters:
       - name: envoy.tcp_proxy
@@ -14,11 +14,11 @@ static_resources:
           stat_prefix: ingress-hello-world
           cluster: hello-world
   clusters:
-  - name: futon-dynamics
+  - name: futon
     connect_timeout: 1s
     type: strict_dns
     load_assignment:
-      cluster_name: futon-dynamcis
+      cluster_name: futon
       endpoints:
         - lb_endpoints:
           - endpoint:
@@ -31,5 +31,5 @@ dynamic_resources:
     api_config_source:
       api_type: REST
       cluster_names:
-        - futon-dynamics
+        - futon
       refresh_delay: 5s

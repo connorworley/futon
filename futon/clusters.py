@@ -24,8 +24,6 @@ def k8s_service_to_envoy_cluster(service, pods):
         service.spec.ports,
     )
 
-    print(f'Pod selector: {service.spec.selector}')
-
     pods = filter(
         lambda pod: pod.metadata.labels is not None \
         and all( \
@@ -90,7 +88,6 @@ def clusters(k8s_client):
         cluster_as_any.Pack(cluster)
         response.resources.append(cluster_as_any)
 
-    print(f'Returning response: {response}', flush=True)
     return json_format.MessageToJson(response)
 
 
