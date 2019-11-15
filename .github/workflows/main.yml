@@ -10,7 +10,7 @@ jobs:
     container:
       image: envoyproxy/envoy-build-ubuntu:latest
       volumes:
-        - ${{ GITHUB_WORKSPACE }}/.bazelcache:/.bazelcache
+        - $GITHUB_WORKSPACE/.bazelcache:/.bazelcache
 
     steps:
     - uses: actions/checkout@v1
@@ -18,7 +18,7 @@ jobs:
     - name: Bazel disk cache
       uses: actions/cache@v1
       with:
-        path: ${{ env.PWD }}/.bazelcache
+        path: $GITHUB_WORKSPACE/.bazelcache
         key: .bazelcache
 
     - name: Build
