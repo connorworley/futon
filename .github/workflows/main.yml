@@ -1,29 +1,14 @@
 name: CI
-
 on: [push]
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
     container:
       image: envoyproxy/envoy-build-ubuntu:latest
-      volumes:
-        - $GITHUB_WORKSPACE/.bazelcache:/.bazelcache
-
     steps:
     - uses: actions/checkout@v1
-    
-    - name: Bazel disk cache
-      uses: actions/cache@v1
-      with:
-        path: $GITHUB_WORKSPACE/.bazelcache
-        key: .bazelcache
-
     - name: Build
-      run: bazel build --disk_cache=/.bazelcache //futon:futon.tar
-    
+      run: bazel build //futon:futon.tar
     - name: Upload docker image tar
       uses: actions/upload-artifact@v1
       with:
