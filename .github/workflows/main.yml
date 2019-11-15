@@ -5,9 +5,10 @@ on: [push]
 jobs:
   build:
 
-    runs-on:
+    runs-on: ubuntu-18.04
+    
+    container:
       image: l.gcr.io/google/bazel:latest
-      entrypoint: ''
 
     steps:
     - uses: actions/checkout@v1
@@ -22,7 +23,7 @@ jobs:
         key: .bazelcache
 
     - name: Build
-      run: bazel build //futon:futon.tar
+      run: bazel build --disk_cache=.bazelcache //futon:futon.tar
     
     - name: Upload docker image tar
       uses: actions/upload-artifact@v1
