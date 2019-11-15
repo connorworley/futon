@@ -10,7 +10,7 @@ jobs:
     container:
       image: envoyproxy/envoy-build-ubuntu:latest
       volumes:
-        - ${{ env.PWD }}/.bazelcache:/.bazelcache
+        - ${{ GITHUB_WORKSPACE }}/.bazelcache:/.bazelcache
 
     steps:
     - uses: actions/checkout@v1
