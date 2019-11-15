@@ -25,4 +25,5 @@ jobs:
     - name: Upload docker image tar
       uses: actions/upload-artifact@v1
       with:
+        name: futon-${{ github.sha }}.tar
         path: futon/futon.tar
