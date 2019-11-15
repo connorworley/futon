@@ -1,0 +1,30 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on:
+      image: l.gcr.io/google/bazel:latest
+      entrypoint: ''
+
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Setup build dependencies
+      run: sudo apt-get update && sudo apt-get install cmake ninja
+    
+    - name: Bazel disk cache
+      uses: actions/cache@v1
+      with:
+        path: .bazelcache
+        key: .bazelcache
+
+    - name: Build
+      run: bazel build //futon:futon.tar
+    
+    - name: Upload docker image tar
+      uses: actions/upload-artifact@v1
+      with:
+        path: futon/futon.tar
