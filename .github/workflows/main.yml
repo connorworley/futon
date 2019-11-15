@@ -5,16 +5,13 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: linux
     
     container:
-      image: l.gcr.io/google/bazel:latest
+      image: envoyproxy/envoy-build-ubuntu:latest
 
     steps:
     - uses: actions/checkout@v1
-    
-    - name: Setup build dependencies
-      run: apt-get update && apt-get install -y cmake ninja
     
     - name: Bazel disk cache
       uses: actions/cache@v1
