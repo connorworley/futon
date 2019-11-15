@@ -9,8 +9,12 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build
       run: bazel build //futon:futon.tar
-    - name: Upload docker image tar
-      uses: actions/upload-artifact@v1
-      with:
-        name: futon-${{ github.sha }}.tar
-        path: bazel-bin/futon/futon.tar
+    - name: debug1
+      run: echo $PWD
+    - name: debug2
+      run: ls
+#     - name: Upload docker image tar
+#       uses: actions/upload-artifact@v1
+#       with:
+#         name: futon-${{ github.sha }}.tar
+#         path: bazel-bin/futon/futon.tar
