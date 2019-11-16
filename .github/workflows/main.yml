@@ -16,7 +16,7 @@ jobs:
     - name: Build
       run: bazel --output_base=/bazel build --disk_cache=/bazel/cache //futon:futon.tar
     - name: Docker push
-      run: docker load -i bazel-bin/futon/futon.tar
+      run: docker load -i bazel-bin/futon/futon.tar &&
         docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password test &&
         docker tag bazel/futon:futon connorworley/futon:latest &&
         docker tag bazel/futon:futon connorworley/futon:${{ github.sha }} &&
