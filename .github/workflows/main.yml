@@ -5,14 +5,19 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: envoyproxy/envoy-build-ubuntu:latest
+      volumes:
+        - /bazel:/bazel
     steps:
     - uses: actions/checkout@v1
+    - name: Bazel disk cache
+      uses: actions/cache@v1
+      with:
+        path: /bazel/cache
+        key: /bazel/cache
     - name: Build
-      run: bazel build //futon:futon.tar
-    - name: debug
-      run: readlink -m bazel-bin
-#     - name: Upload docker image tar
-#       uses: actions/upload-artifact@v1
-#       with:
-#         name: futon-${{ github.sha }}.tar
-#         path: bazel-bin/futon/futon.tar
+      run: bazel --output_base=/bazel build --disk_cache=/bazel/cache //futon:futon.tar
+    - name: Upload docker image tar
+      uses: actions/upload-artifact@v1
+      with:
+        name: futon-${{ github.sha }}.tar
+        path: bazel-bin/futon/futon.tar
