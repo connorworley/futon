@@ -5,8 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: envoyproxy/envoy-build-ubuntu:latest
-      volumes:
-        - /bazel:/bazel
+      options: -v /bazel:/bazel
     steps:
     - uses: actions/checkout@v1
     - name: Bazel disk cache
