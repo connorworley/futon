@@ -13,6 +13,7 @@ jobs:
     - name: Build
       uses: docker://envoyproxy/envoy-build-ubuntu:latest
       with:
+        entrypoint: /bin/sh
         args: bazel --output_base=$GITHUB_WORKSPACE/bazel build --disk_cache=$GITHUB_WORKSPACE/bazel/cache //futon:futon.tar
     - name: debug
       run: readlink -m bazel-bin && echo pwd!!! && ls && echo github_workspace!!! && ls $GITHUB_WORKSPACE
