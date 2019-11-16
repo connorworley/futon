@@ -8,12 +8,12 @@ jobs:
     - name: Bazel disk cache
       uses: actions/cache@v1
       with:
-        path: bazel/cache
+        path: .bazel/cache
         key: /bazel/cache  # this could be any constant
     - name: Build
       uses: docker://envoyproxy/envoy-build-ubuntu:latest
       with:
-        args: bazel --output_base=bazel build --disk_cache=bazel/cache //futon:futon.tar
+        args: bazel --output_base=.bazel build --disk_cache=.bazel/cache //futon:futon.tar
     - name: debug
       run: readlink -m bazel-build && ls && ls bazel
     - name: Docker push
