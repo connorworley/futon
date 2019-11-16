@@ -13,9 +13,9 @@ jobs:
     - name: Build
       uses: docker://envoyproxy/envoy-build-ubuntu:latest
       with:
-        args: sh -c "bazel --output_base=./bazel build --disk_cache=./bazel/cache //futon:futon.tar"  # we need to run with sh -c to send relative paths to the bazel build server
+        args: bazel --output_base=./bazel build --disk_cache=./bazel/cache //futon:futon.tar
     - name: debug
-      run: readlink -m bazel-build && ls && ls bazel
+      run: readlink -m bazel-bin && ls && ls bazel
     - name: Docker push
       run: docker load -i ./bazel-bin/futon/futon.tar &&
         docker login --username connorworley --password '${{ secrets.DOCKER_HUB_PASSWORD }}' &&
