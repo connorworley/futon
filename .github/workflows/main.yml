@@ -22,6 +22,7 @@ jobs:
         ls bazel/execroot/futon/bazel-out/k8-fastbuild &&
         ls bazel/execroot/futon/bazel-out/k8-fastbuild/bin &&
         ls bazel/execroot/futon/bazel-out/k8-fastbuild/bin/futon &&
+        pwd &&
         ls bazel-bin &&
         ls bazel-bin/futon
     - name: Docker push
