@@ -10,7 +10,7 @@ jobs:
     - name: Build
       run: bazel build //futon:futon.tar
     - name: debug
-      run: find bazel-bin
+      run: readlink -m bazel-bin
 #     - name: Upload docker image tar
 #       uses: actions/upload-artifact@v1
 #       with:
