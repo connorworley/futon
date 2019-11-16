@@ -3,18 +3,17 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-18.04
-    container:
-      image: envoyproxy/envoy-build-ubuntu:latest
-      options: -v /bazel:/bazel
     steps:
     - uses: actions/checkout@v1
     - name: Bazel disk cache
       uses: actions/cache@v1
       with:
-        path: /bazel/cache
-        key: /bazel/cache
+        path: $GITHUB_WORKSPACE/bazel/cache
+        key: /bazel/cache  # this could be any constant
     - name: Build
-      run: bazel --output_base=/bazel build --disk_cache=/bazel/cache //futon:futon.tar
+      uses: docker://envoyproxy/envoy-build-ubuntu:latest
+      with:
+        args: bazel --output_base=$GITHUB_WORKSPACE/bazel build --disk_cache=$GITHUB_WORKSPACE/bazel/cache //futon:futon.tar
     - name: Docker push
       run: docker load -i bazel-bin/futon/futon.tar &&
         docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }} &&
