@@ -15,8 +15,10 @@ jobs:
         key: /bazel/cache
     - name: Build
       run: bazel --output_base=/bazel build --disk_cache=/bazel/cache //futon:futon.tar
-    - name: Upload docker image tar
-      uses: actions/upload-artifact@v1
-      with:
-        name: futon.tar
-        path: bazel-bin/futon/futon.tar
+    - name: Docker push
+      run: docker load -i bazel-bin/futon/futon.tar
+        docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password test &&
+        docker tag bazel/futon:futon connorworley/futon:latest &&
+        docker tag bazel/futon:futon connorworley/futon:${{ github.sha }} &&
+        docker push connorworley/futon:latest &&
+        docker push connorworley/futon:${{ github.sha }}
